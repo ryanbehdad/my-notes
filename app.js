@@ -1,6 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
 import {
-  getAuth, GoogleAuthProvider, signInWithRedirect, getRedirectResult, signOut, onAuthStateChanged,
+  getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult, signOut, onAuthStateChanged,
 } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
 import {
   getFirestore, collection, doc, addDoc, updateDoc, deleteDoc,
@@ -85,16 +85,31 @@ const ALLOWED_EMAIL = 'REDACTED';
 googleSigninBtn.addEventListener('click', async () => {
   googleSigninBtn.disabled = true;
   try {
-    await signInWithRedirect(auth, googleProvider);
-    // Page navigates away — nothing below this runs.
+    // Popup works on personal devices (no cross-origin ITP issue, no redirect loop).
+    // If the org browser blocks the popup, fall back to redirect automatically.
+    await signInWithPopup(auth, googleProvider);
   } catch (err) {
-    console.error('Sign-in error:', err);
-    googleSigninBtn.disabled = false;
-    alert(`Sign-in failed.\n\nError: ${err.code}\n${err.message}`);
+    if (err.code === 'auth/popup-blocked') {
+      // Org policy blocks popups — use redirect instead.
+      try {
+        await signInWithRedirect(auth, googleProvider);
+        // Page navigates away; button stays disabled intentionally.
+      } catch (redirectErr) {
+        console.error('Redirect sign-in error:', redirectErr);
+        googleSigninBtn.disabled = false;
+        alert(`Sign-in failed.\n\nError: ${redirectErr.code}\n${redirectErr.message}`);
+      }
+    } else {
+      if (err.code !== 'auth/popup-closed-by-user') {
+        console.error('Sign-in error:', err);
+        alert(`Sign-in failed.\n\nError: ${err.code}\n${err.message}`);
+      }
+      googleSigninBtn.disabled = false;
+    }
   }
 });
 
-// Handle the return from Google's sign-in redirect.
+// Handle the return from a redirect sign-in (org-laptop fallback path).
 // onAuthStateChanged fires automatically on success; this only catches errors.
 getRedirectResult(auth).catch(err => {
   console.error('Redirect result error:', err);
