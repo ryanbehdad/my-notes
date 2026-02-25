@@ -43,6 +43,8 @@ const noteTitle        = $('note-title');
 const noteContent      = $('note-content');
 const saveStatus       = $('save-status');
 const deleteNoteBtn    = $('delete-note-btn');
+const previewBtn       = $('preview-btn');
+const previewEl        = $('note-preview');
 const deleteModal      = $('delete-modal');
 const cancelDeleteBtn  = $('cancel-delete-btn');
 const confirmDeleteBtn = $('confirm-delete-btn');
@@ -56,6 +58,7 @@ let saveTimer         = null;
 let activeSavePromise = null;     // tracks in-flight Firestore write for save-race detection
 let openNoteGen       = 0;        // increments on each openNote call to cancel stale ones
 let unsubNotes        = null;     // Firestore real-time listener cleanup fn
+let isPreviewMode     = false;
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 function esc(s) {
@@ -128,7 +131,45 @@ signoutBtn.addEventListener('click', async () => {
   }
 });
 
-// ── Auth ──────────────────────────────────────────────────────────────────────
+// ── Markdown preview ──────────────────────────────────────────────────────────
+const SVG_EYE = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="16" height="16" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.574-3.007-9.964-7.178z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0z" /></svg>`;
+const SVG_PENCIL = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="16" height="16" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931zm0 0L19.5 7.125" /></svg>`;
+
+function enterPreview() {
+  if (!window.marked || !window.DOMPurify) {
+    alert('Markdown preview unavailable — check your connection and reload.');
+    return;
+  }
+  isPreviewMode = true;
+  const raw = window.marked.parse(noteContent.value ?? '');
+  previewEl.innerHTML = window.DOMPurify.sanitize(raw);
+  // Open links in a new tab safely
+  previewEl.querySelectorAll('a').forEach(a => {
+    a.target  = '_blank';
+    a.rel     = 'noopener noreferrer';
+  });
+  noteContent.classList.add('hidden');
+  previewEl.classList.remove('hidden');
+  previewBtn.innerHTML = SVG_PENCIL;
+  previewBtn.title       = 'Edit';
+  previewBtn.setAttribute('aria-label', 'Edit note');
+}
+
+function enterEdit() {
+  isPreviewMode = false;
+  previewEl.classList.add('hidden');
+  noteContent.classList.remove('hidden');
+  noteContent.focus();
+  previewBtn.innerHTML = SVG_EYE;
+  previewBtn.title       = 'Preview';
+  previewBtn.setAttribute('aria-label', 'Preview note');
+}
+
+previewBtn.addEventListener('click', () => {
+  isPreviewMode ? enterEdit() : enterPreview();
+});
+
+
 let authResolved = false;
 onAuthStateChanged(auth, async user => {
   // First callback: dismiss loading screen and reveal the correct view.
@@ -165,6 +206,13 @@ onAuthStateChanged(auth, async user => {
     notesList.innerHTML    = '';
     editorEl.classList.add('hidden');
     emptyState.classList.remove('hidden');
+    // Reset preview state so next login opens in edit mode.
+    isPreviewMode = false;
+    previewEl.classList.add('hidden');
+    noteContent.classList.remove('hidden');
+    previewBtn.innerHTML = SVG_EYE;
+    previewBtn.title = 'Preview';
+    previewBtn.setAttribute('aria-label', 'Preview note');
     appEl.classList.add('hidden');
     loginScreen.classList.remove('hidden');
   }
@@ -366,6 +414,8 @@ async function openNote(id) {
   noteTitle.value   = note.title ?? '';
   noteContent.value = note.content ?? '';
   saveStatus.textContent = '';
+  // Always open in edit mode so the user can immediately type.
+  if (isPreviewMode) enterEdit();
   showEditor();
   renderList();  // update active highlight
 }

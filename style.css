@@ -323,6 +323,75 @@ html, body {
 }
 #note-content::placeholder { color: var(--text-3); }
 
+/* ── Markdown Preview ────────────────────────────────────────────────────── */
+.note-preview {
+  flex: 1;
+  padding: 18px 24px;
+  overflow-y: auto;
+  font-size: 15px;
+  line-height: 1.75;
+  color: var(--text-1);
+}
+
+.note-preview h1 { font-size: 1.55em; font-weight: 700; letter-spacing: -.4px; margin: 0 0 .5em; }
+.note-preview h2 { font-size: 1.25em; font-weight: 600; margin: 1.4em 0 .4em; }
+.note-preview h3 { font-size: 1.05em; font-weight: 600; margin: 1.2em 0 .3em; }
+.note-preview h4,
+.note-preview h5,
+.note-preview h6 { font-size: 1em; font-weight: 600; margin: 1em 0 .3em; }
+
+.note-preview p  { margin: 0 0 .85em; }
+
+.note-preview a  { color: var(--accent); text-decoration: none; }
+.note-preview a:hover { text-decoration: underline; }
+
+.note-preview strong { font-weight: 600; }
+.note-preview em     { font-style: italic; }
+
+.note-preview ul,
+.note-preview ol { padding-left: 1.6em; margin: 0 0 .85em; }
+.note-preview li { margin-bottom: .2em; }
+
+.note-preview blockquote {
+  border-left: 3px solid var(--border);
+  margin: 0 0 .85em;
+  padding: 3px 0 3px 14px;
+  color: var(--text-2);
+}
+.note-preview blockquote p { margin: 0; }
+
+.note-preview code {
+  font-family: 'SF Mono', 'Fira Code', Consolas, 'Courier New', monospace;
+  font-size: .85em;
+  background: #f3f4f6;
+  padding: 2px 5px;
+  border-radius: 4px;
+}
+.note-preview pre {
+  background: #f3f4f6;
+  border-radius: 8px;
+  padding: 14px 16px;
+  overflow-x: auto;
+  margin: 0 0 .85em;
+}
+.note-preview pre code { background: none; padding: 0; font-size: .85em; }
+
+.note-preview hr {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 1.4em 0;
+}
+
+.note-preview table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: .9em;
+  margin: 0 0 .85em;
+}
+.note-preview th,
+.note-preview td { padding: 6px 12px; border: 1px solid var(--border); text-align: left; }
+.note-preview th { background: var(--surface); font-weight: 600; }
+
 .editor-footer {
   padding: 6px 24px;
   border-top: 1px solid var(--border);
@@ -447,5 +516,6 @@ html, body {
   /* Give the editor a bit more breathing room on narrow screens */
   .editor-header    { padding: 14px 16px; }
   #note-content     { padding: 14px 16px; font-size: 16px; }
+  .note-preview     { padding: 14px 16px; font-size: 16px; }
   .editor-footer    { padding: 6px 16px; }
 }
