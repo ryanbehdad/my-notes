@@ -1,6 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
 import {
-  getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged,
+  getAuth, GoogleAuthProvider, signInWithRedirect, getRedirectResult, signOut, onAuthStateChanged,
 } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
 import {
   getFirestore, collection, doc, addDoc, updateDoc, deleteDoc,
@@ -85,15 +85,20 @@ const ALLOWED_EMAIL = 'REDACTED';
 googleSigninBtn.addEventListener('click', async () => {
   googleSigninBtn.disabled = true;
   try {
-    await signInWithPopup(auth, googleProvider);
+    await signInWithRedirect(auth, googleProvider);
+    // Page navigates away — nothing below this runs.
   } catch (err) {
-    if (err.code !== 'auth/popup-closed-by-user') {
-      console.error('Sign-in error:', err);
-      alert(`Sign-in failed.\n\nError: ${err.code}\n${err.message}`);
-    }
-  } finally {
+    console.error('Sign-in error:', err);
     googleSigninBtn.disabled = false;
+    alert(`Sign-in failed.\n\nError: ${err.code}\n${err.message}`);
   }
+});
+
+// Handle the return from Google's sign-in redirect.
+// onAuthStateChanged fires automatically on success; this only catches errors.
+getRedirectResult(auth).catch(err => {
+  console.error('Redirect result error:', err);
+  alert(`Sign-in failed.\n\nError: ${err.code}\n${err.message}`);
 });
 
 signoutBtn.addEventListener('click', async () => {
