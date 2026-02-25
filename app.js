@@ -1,4 +1,3 @@
-import { ALLOWED_EMAIL } from './config.js';
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
 import {
   getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult, signOut, onAuthStateChanged,
@@ -11,7 +10,7 @@ import {
 // ── Config ────────────────────────────────────────────────────────────────────
 const APP_VERSION = '1.0.0';
 // Firebase web config is safe to commit publicly.
-// Security is enforced by Firestore Security Rules AND the ALLOWED_EMAIL check below.
+// Security is enforced by Firestore Security Rules.
 const firebaseConfig = {
   apiKey:            "AIzaSyAS0zUJaiPdSEcPPGhO0VV5oLSsR_C-4Bg",
   authDomain:        "my-notes-a464a.firebaseapp.com",
@@ -87,10 +86,7 @@ function relativeTime(date) {
 }
 
 // ── Access control ────────────────────────────────────────────────────────────
-// Only this Google account may use the app. Anyone else is signed out immediately.
-// Server-side enforcement is in Firestore Security Rules (rules reject other UIDs too).
-// ALLOWED_EMAIL is imported from config.js (gitignored — see config.example.js).
-
+// Security is enforced server-side by Firestore Security Rules (rules reject other UIDs).
 
 googleSigninBtn.addEventListener('click', async () => {
   googleSigninBtn.disabled = true;
@@ -184,12 +180,6 @@ onAuthStateChanged(auth, async user => {
   }
   currentUser = user;
   if (user) {
-    // Reject anyone who isn't the allowed account — sign them out immediately.
-    if (user.email?.toLowerCase() !== ALLOWED_EMAIL.toLowerCase()) {
-      await signOut(auth);
-      alert(`Access denied.\n\nReceived email: ${user.email}\nExpected: ${ALLOWED_EMAIL}\n\nIf this is you, update ALLOWED_EMAIL in app.js.`);
-      return;
-    }
     userAvatar.src = user.photoURL ?? '';
     userAvatar.alt = user.displayName ?? 'User';
     loginScreen.classList.add('hidden');
