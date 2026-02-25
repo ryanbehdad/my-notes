@@ -30,6 +30,24 @@ html, body {
 .hidden { display: none !important; }
 
 /* ── Login ───────────────────────────────────────────────────────────────── */
+#loading-screen {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.loading-spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid var(--border);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin .7s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
 #login-screen {
   height: 100%;
   display: flex;

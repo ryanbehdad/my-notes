@@ -27,7 +27,8 @@ const googleProvider = new GoogleAuthProvider();
 
 // ── DOM ───────────────────────────────────────────────────────────────────────
 const $ = id => document.getElementById(id);
-
+
+const loadingScreen    = $('loading-screen');
 const loginScreen      = $('login-screen');
 const appEl            = $('app');
 const googleSigninBtn  = $('google-signin-btn');
@@ -127,7 +128,13 @@ signoutBtn.addEventListener('click', async () => {
 });
 
 // ── Auth ──────────────────────────────────────────────────────────────────────
+let authResolved = false;
 onAuthStateChanged(auth, async user => {
+  // First callback: dismiss loading screen and reveal the correct view.
+  if (!authResolved) {
+    authResolved = true;
+    loadingScreen.classList.add('hidden');
+  }
   currentUser = user;
   if (user) {
     // Reject anyone who isn't the allowed account — sign them out immediately.
