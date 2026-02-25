@@ -423,3 +423,29 @@ html, body {
 .notes-list::-webkit-scrollbar       { width: 4px; }
 .notes-list::-webkit-scrollbar-track { background: transparent; }
 .notes-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+/* Back button — only visible on mobile */
+.back-btn { display: none; }
+
+/* ── Mobile layout (single-panel navigation) ─────────────────────────────── */
+@media (max-width: 639px) {
+  /* List view: sidebar fills the screen */
+  .sidebar {
+    width: 100%;
+    border-right: none;
+  }
+
+  /* Editor view: hide the sidebar, show the main panel */
+  .main { display: none; }
+
+  #app.note-open .sidebar { display: none; }
+  #app.note-open .main    { display: flex; }
+
+  /* Show the back arrow in the editor header */
+  .back-btn { display: flex; }
+
+  /* Give the editor a bit more breathing room on narrow screens */
+  .editor-header    { padding: 14px 16px; }
+  #note-content     { padding: 14px 16px; font-size: 16px; }
+  .editor-footer    { padding: 6px 16px; }
+}

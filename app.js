@@ -46,6 +46,7 @@ const deleteNoteBtn    = $('delete-note-btn');
 const deleteModal      = $('delete-modal');
 const cancelDeleteBtn  = $('cancel-delete-btn');
 const confirmDeleteBtn = $('confirm-delete-btn');
+const backBtn          = $('back-btn');
 
 // ── State ─────────────────────────────────────────────────────────────────────
 let currentUser       = null;
@@ -373,10 +374,19 @@ async function openNote(id) {
 function showEditor() {
   emptyState.classList.add('hidden');
   editorEl.classList.remove('hidden');
+  appEl.classList.add('note-open');     // mobile: switch to editor panel
 }
 
 function showEmptyState() {
   editorEl.classList.add('hidden');
   emptyState.classList.remove('hidden');
+  appEl.classList.remove('note-open'); // mobile: switch back to list panel
   renderList();
 }
+
+// Back button (mobile only — desktop keeps it hidden via CSS)
+backBtn.addEventListener('click', async () => {
+  await flushPendingSave();
+  currentNoteId = null;
+  showEmptyState();
+});
