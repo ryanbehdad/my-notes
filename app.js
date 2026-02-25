@@ -89,7 +89,7 @@ googleSigninBtn.addEventListener('click', async () => {
   } catch (err) {
     if (err.code !== 'auth/popup-closed-by-user') {
       console.error('Sign-in error:', err);
-      alert('Sign-in failed. Please try again.');
+      alert(`Sign-in failed.\n\nError: ${err.code}\n${err.message}`);
     }
   } finally {
     googleSigninBtn.disabled = false;
