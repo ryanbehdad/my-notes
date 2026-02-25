@@ -1,3 +1,4 @@
+import { ALLOWED_EMAIL } from './config.js';
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
 import {
   getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult, signOut, onAuthStateChanged,
@@ -84,7 +85,7 @@ function relativeTime(date) {
 // ── Access control ────────────────────────────────────────────────────────────
 // Only this Google account may use the app. Anyone else is signed out immediately.
 // Server-side enforcement is in Firestore Security Rules (rules reject other UIDs too).
-const ALLOWED_EMAIL = 'REDACTED';
+// ALLOWED_EMAIL is imported from config.js (gitignored — see config.example.js).
 
 
 googleSigninBtn.addEventListener('click', async () => {
