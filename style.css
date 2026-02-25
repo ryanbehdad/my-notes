@@ -493,6 +493,13 @@ html, body {
 .notes-list::-webkit-scrollbar-track { background: transparent; }
 .notes-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
 
+.sidebar-version {
+  padding: 8px 14px 10px;
+  font-size: 11px;
+  color: var(--text-3);
+  flex-shrink: 0;
+}
+
 /* Back button — only visible on mobile */
 .back-btn { display: none; }
 

@@ -1,4 +1,6 @@
 import { ALLOWED_EMAIL } from './config.js';
+
+const APP_VERSION = '1.0.0';
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
 import {
   getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult, signOut, onAuthStateChanged,
@@ -50,8 +52,11 @@ const deleteModal      = $('delete-modal');
 const cancelDeleteBtn  = $('cancel-delete-btn');
 const confirmDeleteBtn = $('confirm-delete-btn');
 const backBtn          = $('back-btn');
+const appVersionEl     = $('app-version');
 
-// ── State ─────────────────────────────────────────────────────────────────────
+appVersionEl.textContent = `v${APP_VERSION}`;
+
+// ── State─────────────────────────────────────────────────────────────────────
 let currentUser       = null;
 let notes             = [];       // in-memory snapshot cache, ordered by updatedAt desc
 let currentNoteId     = null;
