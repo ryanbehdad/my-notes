@@ -131,9 +131,9 @@ onAuthStateChanged(auth, async user => {
   currentUser = user;
   if (user) {
     // Reject anyone who isn't the allowed account — sign them out immediately.
-    if (user.email !== ALLOWED_EMAIL) {
+    if (user.email?.toLowerCase() !== ALLOWED_EMAIL.toLowerCase()) {
       await signOut(auth);
-      alert('This app is private. Access denied.');
+      alert(`Access denied.\n\nReceived email: ${user.email}\nExpected: ${ALLOWED_EMAIL}\n\nIf this is you, update ALLOWED_EMAIL in app.js.`);
       return;
     }
     userAvatar.src = user.photoURL ?? '';
