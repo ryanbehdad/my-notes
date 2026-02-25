@@ -1,6 +1,4 @@
 import { ALLOWED_EMAIL } from './config.js';
-
-const APP_VERSION = '1.0.0';
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
 import {
   getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult, signOut, onAuthStateChanged,
@@ -11,6 +9,7 @@ import {
 } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
 
 // ── Config ────────────────────────────────────────────────────────────────────
+const APP_VERSION = '1.0.0';
 // Firebase web config is safe to commit publicly.
 // Security is enforced by Firestore Security Rules AND the ALLOWED_EMAIL check below.
 const firebaseConfig = {
@@ -54,7 +53,7 @@ const confirmDeleteBtn = $('confirm-delete-btn');
 const backBtn          = $('back-btn');
 const appVersionEl     = $('app-version');
 
-appVersionEl.textContent = `v${APP_VERSION}`;
+if (appVersionEl) appVersionEl.textContent = `v${APP_VERSION}`;
 
 // ── State─────────────────────────────────────────────────────────────────────
 let currentUser       = null;
