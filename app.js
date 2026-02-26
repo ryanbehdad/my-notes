@@ -276,6 +276,7 @@ newNoteBtn.addEventListener('click', async () => {
     noteContent.value = '';
     saveStatus.textContent = '';
     showEditor();
+    if (isPreviewMode) enterEdit();
     noteTitle.focus();
   } catch (err) {
     console.error('Create note error:', err);
