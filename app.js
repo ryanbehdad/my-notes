@@ -334,8 +334,14 @@ deleteModal.addEventListener('click', e => {
   if (e.target === deleteModal) closeModal();
 });
 
-document.addEventListener('keydown', e => {
+document.addEventListener('keydown', async e => {
   if (e.key === 'Escape' && !deleteModal.classList.contains('hidden')) closeModal();
+  // Ctrl+Enter (or Cmd+Enter on Mac): save and switch to preview.
+  if (e.key === 'Enter' && (e.ctrlKey || e.metaKey) && !isPreviewMode && currentNoteId) {
+    e.preventDefault();
+    await flushPendingSave();
+    enterPreview();
+  }
 });
 
 confirmDeleteBtn.addEventListener('click', async () => {
