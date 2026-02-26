@@ -410,8 +410,8 @@ async function openNote(id) {
   noteTitle.value   = note.title ?? '';
   noteContent.value = note.content ?? '';
   saveStatus.textContent = '';
-  // Always open in preview mode; user can switch to edit via the pencil button.
-  if (!isPreviewMode) enterPreview();
+  // Always render preview for the new note's content (re-renders even if already in preview mode).
+  enterPreview();
   showEditor();
   renderList();  // update active highlight
 }
